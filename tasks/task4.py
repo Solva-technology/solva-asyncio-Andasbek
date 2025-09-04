@@ -1,6 +1,7 @@
 import asyncio
 import pytest
 
+
 async def safe_divide(a, b):
     await asyncio.sleep(0.1)
     try:

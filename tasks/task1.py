@@ -1,7 +1,6 @@
 import aiohttp
 import asyncio
 import pytest
-from aioresponses import aioresponses
 
 
 async def fetch_status(session, url: str) -> int:
@@ -24,14 +23,10 @@ async def test_fetch_status_200():
 
 @pytest.mark.asyncio
 async def test_fetch_all_statuses():
-    urls = ['https://example.com/ok', 'https://example.com/notfound']
-    with aioresponses() as mocked:
-        mocked.get('https://example.com/ok', status=200)
-        mocked.get('https://example.com/notfound', status=404)
-        statuses = await fetch_all(urls)
-    assert statuses == [200, 404]
-
-if __name__ == "__main__":
-    asyncio.run(test_fetch_status_200())
-    asyncio.run(test_fetch_all())
-    print("All tests passed.")
+    urls = [
+        'https://httpbin.org/status/200',
+        'https://httpbin.org/status/404',
+        'https://httpbin.org/status/500'
+    ]
+    statuses = await fetch_all(urls)
+    assert statuses == [200, 404, 500]

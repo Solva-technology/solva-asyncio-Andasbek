@@ -12,6 +12,3 @@ async def echo_all():
       delayed_echo('!', 1)
    ]
    return await asyncio.gather(*tasks)
-
-# if __name__ == "__main__":
-#    print(asyncio.run(echo_all()))

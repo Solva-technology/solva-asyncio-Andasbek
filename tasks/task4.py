@@ -1,27 +1,36 @@
-# ЗАДАЧА 4: Асинхронная обработка исключений
-
-# ДАНО:
-# - Два числа `a` и `b`
-# - Список пар чисел для деления
-
-# ЧТО НУЖНО СДЕЛАТЬ:
-# - Написать корутину `safe_divide(a, b)`, которая:
-#     → делает паузу 0.1 секунды
-#     → пытается вернуть результат деления a / b
-#     → если деление невозможно (ZeroDivisionError) — вернуть строку "Ошибка деления"
-
-# - Написать функцию `run_divisions()`, которая:
-#     → запускает несколько вызовов safe_divide параллельно
-#     → собирает и возвращает список результатов
-
-# ПРИМЕР:
-# >>> await run_divisions()
-# [5.0, "Ошибка деления", 2.0]
 import asyncio
-
+import pytest
 
 async def safe_divide(a, b):
-    pass
+    await asyncio.sleep(0.1)
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return "Ошибка деления"
 
 async def run_divisions():
-    pass
+    pairs = [(10, 2), (5, 0), (8, 4)]
+    tasks = [safe_divide(a, b) for a, b in pairs]
+    return await asyncio.gather(*tasks)
+
+# Тесты
+@pytest.mark.asyncio
+async def test_safe_divide():
+    result1 = await safe_divide(10, 2)
+    assert result1 == 5.0
+
+    result2 = await safe_divide(5, 0)
+    assert result2 == "Ошибка деления"
+
+    result3 = await safe_divide(8, 4)
+    assert result3 == 2.0
+
+@pytest.mark.asyncio
+async def test_run_divisions_expected_results():
+    results = await run_divisions()
+    assert results == [5.0, "Ошибка деления", 2.0]
+
+if __name__ == "__main__":
+    asyncio.run(test_safe_divide())
+    asyncio.run(test_run_divisions_expected_results())
+    print("All tests passed.")

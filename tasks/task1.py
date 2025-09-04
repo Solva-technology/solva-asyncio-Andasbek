@@ -22,7 +22,7 @@ async def test_fetch_status_200():
         assert status == 200
 
 @pytest.mark.asyncio
-async def test_fetch_all():
+async def test_fetch_all_statuses():
     urls = [
         'https://httpbin.org/status/200',
         'https://httpbin.org/status/404',

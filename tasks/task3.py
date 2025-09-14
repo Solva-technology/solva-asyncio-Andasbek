@@ -1,24 +1,13 @@
-# ЗАДАЧА 3: Ограничение количества одновременных задач
-
-# ДАНО:
-# - Список задач, каждая имеет уникальный task_id (например: 0, 1, 2, 3, 4)
-# - Семафор с лимитом на количество одновременных задач
-
-# ЧТО НУЖНО СДЕЛАТЬ:
-# - Написать корутину `limited_worker(task_id, semaphore)`, которая:
-#     → захватывает семафор (async with semaphore)
-#     → делает паузу 0.1 секунды
-#     → возвращает task_id
-
-# - Написать функцию `limited_runner()`, которая:
-#     → создает семафор с лимитом 2
-#     → запускает 5 задач limited_worker (от 0 до 4)
-#     → возвращает список task_id после выполнения всех задач
 import asyncio
+import pytest
 
 
 async def limited_worker(task_id, semaphore):
-    pass
+    async with semaphore:
+        await asyncio.sleep(0.1)
+        return task_id
 
 async def limited_runner():
-    pass
+    semaphore = asyncio.Semaphore(2)
+    tasks = [limited_worker(i, semaphore) for i in range(5)]
+    return await asyncio.gather(*tasks)

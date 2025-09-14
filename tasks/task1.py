@@ -1,32 +1,44 @@
 import aiohttp
 import asyncio
+
+async def fetch_status(session, url):
+    pass
+
+async def fetch_all(urls):
+    pass
+import aiohttp
 import pytest
 
 
 async def fetch_status(session, url: str) -> int:
     async with session.get(url) as response:
         return response.status
-    
-async def fetch_all(urls: list) -> list:
+
+
+async def fetch_all(urls: list[str]) -> list[int]:
     async with aiohttp.ClientSession() as session:
         tasks = [fetch_status(session, url) for url in urls]
         return await asyncio.gather(*tasks)
 
 
-# Тесты
 @pytest.mark.asyncio
 async def test_fetch_status_200():
     async with aiohttp.ClientSession() as session:
-        status = await fetch_status(session, 'https://httpbin.org/status/200')
+        status = await fetch_status(session, "https://httpbin.org/status/200")
         print("Полученный статус:", status)
         assert status == 200
+
 
 @pytest.mark.asyncio
 async def test_fetch_all_statuses():
     urls = [
-        'https://httpbin.org/status/200',
-        'https://httpbin.org/status/404',
-        'https://httpbin.org/status/500'
+        "https://httpbin.org/status/200",
+        "https://httpbin.org/status/404",
+        "https://httpbin.org/status/500",
     ]
     statuses = await fetch_all(urls)
     assert statuses == [200, 404, 500]
+
+    urls = ["https://httpbin.org/status/200", "https://httpbin.org/status/404"]
+    statuses = await fetch_all(urls)
+    assert statuses == [200, 404]
